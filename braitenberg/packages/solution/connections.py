@@ -7,6 +7,25 @@ def rescale(a: float, L: float, U: float):
         return 0.0
     return (a - L) / (U - L)
 
+
+def genMatrix(shape: Tuple[int, int], modifier: int) -> np.ndarray:
+    res = np.zeros(shape=shape, dtype="float32")
+    w, h = shape[1], shape[0]
+    for x in range(w):
+        sign = modifier * (1 if x < 0.5*w else -1)
+        min_val = 0.02
+        dir_val = 0.1
+        for y in range(h):
+            v = ((x-w/2)**2)/(3*h) + 0.32*h
+            if y < v and (x < 0.35*w or x > 0.65*w):
+                res[y, x] = -sign * (min_val if y < v - 0.15*h else dir_val)
+            elif y < v:
+                res[y, x] = 0.0
+            else:
+                res[y, x] = sign * max(dir_val, rescale(y, v, 1.0*h + v))
+
+    return res
+
 def get_motor_left_matrix(shape: Tuple[int, int]) -> np.ndarray:
     res = np.zeros(shape=shape, dtype="float32")
 
@@ -50,19 +69,8 @@ def get_motor_left_matrix(shape: Tuple[int, int]) -> np.ndarray:
     res[h-int(0.45*h):h-int(0.3*h), int(0.00*w):int(0.13*w)] = 0.55
     res[h-int(0.3*h):h-int(0.0*h), int(0.0*w):int(0.13*w)] = 0.8
     """
-    for x in range(w):
-        sign = 1 if x < 0.5*w else -1
-        min_val = 0.05
-        dir_val = 0.1
-        for y in range(h):
-            v = ((x-w/2)**2)/(2.5*h) + 0.33*h
-            if y < v and (x < 0.4*w or x > 0.60*w):
-                res[y, x] = -sign * (min_val if y < v - 0.20*h else dir_val)
-            elif y < v:
-                res[y, x] = 0.0
-            else:
-                res[y, x] = sign * max(dir_val, rescale(y, v, 1.0*h + v))
 
+    res = genMatrix(shape, 1)
 
     return res
 
@@ -71,6 +79,6 @@ def get_motor_right_matrix(shape: Tuple[int, int]) -> np.ndarray:
     res = np.zeros(shape=shape, dtype="float32")
 
     w, h = shape[1], shape[0]
-    res = -get_motor_left_matrix(shape)
-
+    #res = -get_motor_left_matrix(shape)
+    res = genMatrix(shape, -1)
     return res
