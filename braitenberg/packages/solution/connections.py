@@ -15,8 +15,11 @@ def genMatrix(shape: Tuple[int, int], modifier: int) -> np.ndarray:
         sign = modifier * (1 if x < 0.5*w else -1)
         min_val = 0.02
         dir_val = 0.1
+        slope = 3 * h
+        offset_vert = 0.32 * h
+        dir_size = 0.35
         for y in range(h):
-            v = ((x-w/2)**2)/(3*h) + 0.32*h
+            v = ((x-w/2)**2) / slope + offset_vert
             if y < v and (x < 0.35*w or x > 0.65*w):
                 res[y, x] = -sign * (min_val if y < v - 0.15*h else dir_val)
             elif y < v:
