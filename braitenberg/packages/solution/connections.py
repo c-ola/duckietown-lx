@@ -11,8 +11,8 @@ def rescale(a: float, L: float, U: float):
 def genMatrix(shape: Tuple[int, int], modifier: int) -> np.ndarray:
     res = np.zeros(shape=shape, dtype="float32")
     w, h = shape[1], shape[0]
-    min_val = 0.00
-    offset_vert = 0.28 * h
+    min_val = 0.2
+    offset_vert = 0.35 * h
     slope = 2.5 * h
     for x in range(w):
         sign = modifier * (1 if x < 0.5*w else -1)
