@@ -25,7 +25,7 @@ from solution.preprocessing import preprocess
 # TODO edit this Config class ! Play with different gain and const values
 @dataclass
 class BraitenbergAgentConfig:
-    gain: float = 0.0
+    gain: float = 0.2
     const: float = 0.2
 
 
@@ -49,6 +49,10 @@ class BraitenbergAgent:
         self.r_min = math.inf
         self.left = None
         self.right = None
+        self.l_max = 307200
+        self.r_max = 307200
+        self.r_min = -307200
+        self.l_min = -307200
 
     def on_received_seed(self, data: int):
         np.random.seed(data)
@@ -84,11 +88,13 @@ class BraitenbergAgent:
         # We normalize them using the history
 
         # first, we remember the high/low of these raw signals
-        self.l_max = max(l, self.l_max)
-        self.r_max = max(r, self.r_max)
-        self.l_min = min(l, self.l_min)
-        self.r_min = min(r, self.r_min)
-
+        # this doesn't actually make sense to do and will skew the values 
+        # causing the bot to spin around
+        #self.l_max = max(l, self.l_max)
+        #self.r_max = max(r, self.r_max)
+        #self.l_min = min(l, self.l_min)
+        #self.r_min = min(r, self.r_min)
+        
         # now rescale from 0 to 1
         ls = rescale(l, self.l_min, self.l_max)
         rs = rescale(r, self.r_min, self.r_max)
